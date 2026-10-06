@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Разбор аргументации</title>
+<script>try{if(window.top!==window.self)document.documentElement.classList.add("embedded");const th=localStorage.getItem("argTheme");if(th)document.documentElement.dataset.theme=th}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#f0eee9; --text:#1c1b19; --muted:#6b675f; --line:#e2dfd8;
+  --accent:#1c1b19;
+  --logos:#2457c5; --logos-bg:#e8eefb;
+  --ethos:#a86a00; --ethos-bg:#fbf1dc;
+  --pathos:#c42b6b; --pathos-bg:#fbe7ef;
+  --none:#7a766e; --none-bg:#ecebe7;
+  --fallacy:#c0392b; --fallacy-bg:#fdecea;
+  --active:#fff7d6; --active-line:#e0b400;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+    --accent:#efede8;
+    --logos:#7fa6f5; --logos-bg:#1d2a45;
+    --ethos:#e8b24a; --ethos-bg:#3a2d12;
+    --pathos:#f07aa9; --pathos-bg:#43182b;
+    --none:#a8a49b; --none-bg:#2c2b27;
+    --fallacy:#ff7b6b; --fallacy-bg:#45201b;
+    --active:#3a3317; --active-line:#e0b400;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+  --accent:#efede8;
+  --logos:#7fa6f5; --logos-bg:#1d2a45;
+  --ethos:#e8b24a; --ethos-bg:#3a2d12;
+  --pathos:#f07aa9; --pathos-bg:#43182b;
+  --none:#a8a49b; --none-bg:#2c2b27;
+  --fallacy:#ff7b6b; --fallacy-bg:#45201b;
+  --active:#3a3317; --active-line:#e0b400;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.5}
+button{font:inherit;color:inherit}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px}
+
+/* header */
+header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.embedded .left{top:96px}
+.head{display:flex;align-items:center;gap:24px;padding:14px 0 0;flex-wrap:wrap}
+.head h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.01em}
+.head .meta{color:var(--muted);font-size:14px}
+.head .spacer{flex:1}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--muted)}
+.iconbtn:hover{color:var(--text)}
+.embedded .head .meta,.embedded #themeBtn{display:none}
+.embedded .head{padding-top:10px}
+.tabs{display:flex;gap:4px;margin-top:10px;overflow-x:auto}
+.tab{border:0;background:none;padding:10px 16px;border-bottom:3px solid transparent;cursor:pointer;font-weight:500;color:var(--muted);white-space:nowrap;font-size:16px}
+.tab .k{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-right:6px;color:var(--muted);vertical-align:2px}
+.tab[aria-selected="true"]{color:var(--text);border-bottom-color:var(--text)}
+
+.banner{display:none;margin:16px 0 0;padding:12px 16px;border-radius:10px;background:var(--fallacy-bg);color:var(--text);font-size:15px;border:1px solid var(--line)}
+.banner.show{display:block}
+.banner code{background:var(--surface);padding:1px 6px;border-radius:4px}
+
+section.panel{display:none;padding:22px 0 60px}
+section.panel.show{display:block}
+
+/* context */
+.ctx{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ctx .c{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.ctx .c h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.ctx .c p{margin:0;font-size:15px}
+.thesis{margin:14px 0 18px;display:flex;gap:14px;align-items:flex-start;background:var(--text);color:var(--bg);border-radius:12px;padding:14px 18px;cursor:pointer}
+.thesis .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;white-space:nowrap;padding-top:4px}
+.thesis .txt{font-size:20px;font-weight:600;line-height:1.35}
+.thesis .tt{margin-left:auto;font-size:13px;opacity:.7;white-space:nowrap;padding-top:5px}
+
+/* main grid */
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+.left{position:sticky;top:112px}
+.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.player > div,.player iframe{position:absolute;inset:0;width:100%;height:100%}
+.player .err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;color:#eee;padding:24px;font-size:15px;background:#111}
+.player .err.show{display:flex}
+.player .err a{color:#9cc0ff}
+
+.tl{margin-top:12px}
+.tlbar{position:relative;height:30px;border-radius:6px;overflow:hidden;background:var(--surface-2);cursor:pointer}
+.seg{position:absolute;top:0;bottom:0;border-right:1px solid var(--bg)}
+.seg.L{background:var(--logos)} .seg.E{background:var(--ethos)} .seg.P{background:var(--pathos)} .seg.N{background:var(--none)}
+.seg.f{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.0) 0 5px,rgba(255,255,255,.45) 5px 8px)}
+.seg.on{outline:3px solid var(--active-line);outline-offset:-3px;z-index:1}
+.head-line{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--text);border-radius:2px;left:0;pointer-events:none;z-index:2}
+.tlx{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px;gap:12px;flex-wrap:wrap}
+.legend{display:flex;gap:12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.L{background:var(--logos)} .sw.E{background:var(--ethos)} .sw.P{background:var(--pathos)} .sw.N{background:var(--none)}
+.sw.f{background:var(--none);background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgba(255,255,255,.7) 3px 5px)}
+
+.now{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--none);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);min-height:120px}
+.now.L{border-left-color:var(--logos)} .now.E{border-left-color:var(--ethos)} .now.P{border-left-color:var(--pathos)}
+.now .grp{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.now h3{margin:4px 0 6px;font-size:22px;line-height:1.3}
+.now p{margin:8px 0 0;font-size:16px}
+.now .empty{color:var(--muted)}
+.ctrls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.ctrls .iconbtn{font-size:14px}
+.ctrls label{font-size:14px;color:var(--muted);display:inline-flex;gap:6px;align-items:center;margin-left:auto;cursor:pointer}
+
+/* tree */
+.tree{display:flex;flex-direction:column;gap:14px}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.ghead{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:baseline}
+.ghead .gn{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.ghead h3{margin:0;font-size:18px;line-height:1.3}
+.ghead .gc{font-size:14px;color:var(--muted);margin-top:2px}
+.items{list-style:none;margin:0;padding:6px}
+.item{display:grid;grid-template-columns:56px 1fr;gap:10px;padding:10px;border-radius:10px;cursor:pointer;border:2px solid transparent;position:relative}
+.item:hover{background:var(--surface-2)}
+.item.on{background:var(--active);border-color:var(--active-line)}
+.item .time{font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--muted);padding-top:2px}
+.item .time .n{display:block;font-size:11px;font-weight:500}
+.item .ttl{font-weight:600;font-size:16px;line-height:1.35}
+.item .q{font-style:italic;color:var(--muted);font-size:14px;margin-top:2px}
+.item .why{font-size:14.5px;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-weight:500;white-space:nowrap}
+.chip.L{background:var(--logos-bg);color:var(--logos)} .chip.E{background:var(--ethos-bg);color:var(--ethos)} .chip.P{background:var(--pathos-bg);color:var(--pathos)} .chip.N{background:var(--none-bg);color:var(--none)}
+.chip.f{background:var(--fallacy-bg);color:var(--fallacy)}
+.chip.str{letter-spacing:1px}
+.chip.ap{font-size:15px;padding:4px 14px;font-weight:700;letter-spacing:.02em;border:1.5px solid currentColor}
+.chip.ap.sec{font-size:13px;padding:3px 11px;font-weight:600;border-style:dashed}
+.concl{border:2px solid var(--text)}
+.concl .ghead{background:var(--surface-2)}
+
+/* summary per video */
+.sumv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px;margin-top:26px;align-items:stretch}
+.bestgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.best{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--none);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);cursor:pointer}
+.best:hover{background:var(--surface-2)}
+.best.L{border-top-color:var(--logos)} .best.E{border-top-color:var(--ethos)} .best.P{border-top-color:var(--pathos)}
+.best .bh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.best .bl{font-size:13px;color:var(--muted)}
+.best .ttl{font-weight:600;font-size:16px;line-height:1.35}
+.best p{margin:6px 0 0;font-size:15px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+.box h3{margin:0 0 8px;font-size:17px}
+.box p{margin:6px 0;font-size:15.5px}
+.formula{margin-top:14px;font-size:15px;color:var(--muted)}
+.formula b{color:var(--text)}
+
+/* summary */
+.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.bars .row{margin:14px 0}
+.bars .row .nm{display:flex;justify-content:space-between;font-size:15px;margin-bottom:5px}
+.stack{display:flex;height:28px;border-radius:6px;overflow:hidden;background:var(--surface-2)}
+.stack div{height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:600;min-width:0;overflow:hidden;white-space:nowrap;border-right:1px solid var(--bg)}
+.stack .L{background:var(--logos)} .stack .E{background:var(--ethos)} .stack .P{background:var(--pathos)} .stack .N{background:var(--none)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+td:first-child{font-weight:600;white-space:nowrap}
+.gloss{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.gloss .box h3{display:flex;gap:8px;align-items:center}
+h2.sec{font-size:20px;margin:28px 0 12px}
+.intro{max-width:900px;color:var(--muted);margin:0 0 6px}
+
+@media (max-width:1100px){
+  .grid{grid-template-columns:1fr}
+  .left{position:static}
+  .ctx{grid-template-columns:1fr 1fr}
+  .sumv,.bestgrid,.gloss,.sumgrid{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  body{font-size:16px}
+  .ctx{grid-template-columns:1fr}
+  .thesis{flex-direction:column;gap:4px}
+  .thesis .tt{margin-left:0}
+  .head h1{font-size:18px}
+  td:first-child{white-space:normal}
+  .tbl{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="head">
+      <h1>Риторика и аргументация: разбор трёх выступлений</h1>
+      <span class="meta">УНФ · Модуль 2 «Коммуникация» · ДЗ к занятию 23.09.2026 · Машрабов Диловар</span>
+      <span class="spacer"></span>
+      <button class="iconbtn" id="themeBtn" title="Сменить тему">◐ Тема</button>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="fileBanner">
+    Файл открыт напрямую, а YouTube в таком режиме часто не показывает видео (ошибка 153).
+    Откройте отчёт двойным кликом по файлу <code>Открыть отчёт.command</code> в той же папке.
+    Без плеера клики по аргументам открывают YouTube на нужной секунде в новой вкладке.
+  </div>
+  <div id="panels"></div>
+</main>
+
+<script>
+/* ---------- данные ---------- */
+const APPEAL = {
+  L:{name:"Логос", hint:"логика, факты, расчёт"},
+  E:{name:"Этос", hint:"доверие, авторитет, личность"},
+  P:{name:"Пафос", hint:"эмоции, образы, ценности"},
+  N:{name:"Без основания", hint:"мнение без аргумента"}
+};
+const NAT = {F:"Факт", M:"Мнение", E:"Эмоция"};
+
+const VIDEOS = [
+{
+  key:"king", tab:"Кинг", yt:"SWDweVc_mnQ", end:426,
+  title:"Мартин Лютер Кинг — «I Have a Dream»",
+  ctx:{
+    where:"Вашингтон, ступени мемориала Линкольна, «Марш на Вашингтон за рабочие места и свободу». 28 августа 1963 г. В ролике сокращённая версия (~7 мин).",
+    who:"Мартин Лютер Кинг-младший — баптистский пастор, лидер движения за гражданские права чернокожих американцев.",
+    aud:"Около 250 000 человек на месте и вся страна по ТВ. Скрытая аудитория — Конгресс и президент, от которых зависит закон о гражданских правах.",
+    goal:"Мобилизовать сторонников и убедить нацию: равноправие — это не бунт против Америки, а исполнение её собственных обещаний."
+  },
+  thesis:{t:128, text:"Америка должна наконец выполнить своё обещание свободы и равенства — для всех граждан, включая чернокожих."},
+  groups:[
+    {title:"Вступление: масштаб момента", claim:"Сегодняшний день войдёт в историю", items:[
+      {t:10, ttl:"«Величайшая демонстрация за свободу в истории нашей страны»", why:"Задаёт значимость момента ещё до аргументов. Это прогноз, а не доказательство, но он объединяет аудиторию.", a:"E", a2:"P", type:"к значимости момента", nat:["M"], s:2}
+    ]},
+    {title:"Обещание было дано", claim:"Сто лет назад страна официально пообещала свободу", items:[
+      {t:40, ttl:"Прокламация об освобождении рабов", q:"«a great American, in whose symbolic shadow we stand»", why:"Ссылка на исторический документ и на Линкольна — без имени, но речь звучит у его мемориала. Позиция опирается на авторитет, который уважают все стороны.", a:"E", a2:"L", type:"к авторитету, к истории", nat:["F"], s:3},
+      {t:60, ttl:"«Маяк надежды», «радостный рассвет» после долгой ночи неволи", why:"Метафоры превращают документ в живое переживание и подготавливают контраст со следующим блоком.", a:"P", type:"к образу (метафора)", nat:["E"], s:2}
+    ]},
+    {title:"Обещание не выполнено", claim:"Через сто лет чернокожий всё ещё не свободен", items:[
+      {t:86, ttl:"«Сто лет спустя — всё ещё не свободен»", why:"Ключевой логический ход речи: обещали, но не сделали. Противоречие между словом и делом трудно опровергнуть.", a:"L", a2:"P", type:"к факту, к противоречию", nat:["F","E"], s:3},
+      {t:101, ttl:"«Оковы сегрегации и цепи дискриминации»", why:"Реальная ситуация (сегрегация) описана языком рабства: это прямо связывает настоящее с прошлым.", a:"P", type:"к образу (метафора факта)", nat:["F","E"], s:2},
+      {t:116, ttl:"«Одинокий остров бедности посреди океана процветания»", why:"Контраст показывает экономическое неравенство. Цифр нет — только образ.", a:"P", a2:"L", type:"к контрасту", nat:["F","E"], s:2}
+    ]},
+    {title:"Равенство — это кредо самой Америки", claim:"Требование равенства вытекает из основ страны", items:[
+      {t:128, ttl:"«Все люди созданы равными» — Декларация независимости", why:"Аргумент к последовательности: «живите по своим же правилам». Оппоненту пришлось бы спорить с основополагающим документом своей страны.", a:"L", a2:"E", type:"к авторитету, к ценностям", nat:["F"], s:3}
+    ]},
+    {title:"Мечта: каким может быть будущее", claim:"Равенство достижимо — вот как оно выглядит", items:[
+      {t:150, ttl:"Джорджия: потомки рабов и рабовладельцев за одним столом", why:"Конкретный штат и конкретная сцена делают абстрактное «равенство» видимым.", a:"P", type:"к образу, к примеру", nat:["E"], s:3},
+      {t:170, ttl:"Миссисипи: из «жары несправедливости» в «оазис свободы»", why:"Самый жёсткий штат назван прямо: даже там перемены возможны.", a:"P", type:"к образу", nat:["E"], s:2},
+      {t:194, ttl:"Четверо его детей: судить по характеру, а не по цвету кожи", why:"Самый сильный эмоциональный момент: абстрактная справедливость становится судьбой конкретных детей. Тут же звучит критерий справедливости.", a:"P", a2:"E", type:"к личному опыту", nat:["E","M"], s:3},
+      {t:210, ttl:"Алабама: чёрные и белые дети держатся за руки", why:"Резкая оценка местных властей и сразу картина примирения. Противник назван, но цель — образ будущего, а не атака.", a:"P", type:"к образу, к контрасту", nat:["E"], s:2}
+    ]},
+    {title:"Вера даёт силу действовать", claim:"Цель угодна Богу, и с верой её можно достичь", items:[
+      {t:249, ttl:"Пророк Исаия: «всякий дол да поднимется…»", why:"Религиозный авторитет: равенство — часть Божьего замысла. Сильно для верующей аудитории.", a:"E", a2:"P", type:"к религиозному авторитету", nat:["M"], s:2},
+      {t:274, ttl:"«С этой верой» — работать, молиться, бороться, даже сидеть в тюрьме вместе", why:"Анафора превращает надежду в план совместных действий.", a:"P", type:"к единству, призыв", nat:["E"], s:2}
+    ]},
+    {title:"Свобода — это патриотизм", claim:"Бороться за равенство значит быть настоящим американцем", items:[
+      {t:306, ttl:"Патриотическая песня «My Country, 'Tis of Thee»", why:"Слова, знакомые каждому американцу, звучат по-новому: права чернокожих становятся частью национальной традиции.", a:"P", type:"к традиции", nat:["E"], s:2},
+      {t:330, ttl:"«Если Америке быть великой нацией, это должно стать правдой»", why:"Условный логический аргумент: величие страны прямо зависит от равенства. Короткий, но очень точный ход.", a:"L", type:"условный вывод (если… то…)", nat:["M"], s:3},
+      {t:338, ttl:"«Пусть свобода звенит» с гор каждого штата", why:"Перечисление штатов — от Нью-Гэмпшира до Миссисипи — показывает, что вопрос касается всей страны. Повтор создаёт ритм.", a:"P", type:"к образу, анафора", nat:["E"], s:2}
+    ]}
+  ],
+  concl:{t:380, ttl:"Когда свобода зазвенит повсюду, все «дети Божьи» скажут: «наконец свободны»", why:"Финал объединяет всех — белых и чёрных, иудеев и христиан. Вывод-призыв, а не логический итог.", a:"P", a2:"E", type:"вывод-призыв", nat:["E"], s:3},
+  formula:"<b>Тезис</b> (обещание не выполнено) → <b>аргумент</b> (оно дано в основах страны) → <b>доказательства</b> (Прокламация, Декларация, картины будущего, Писание, патриотизм) → <b>вывод</b> (пусть свобода звенит).",
+  summary:"Кинг строит речь на одном сильном логическом ходе: сто лет назад Америка пообещала свободу, а чернокожие до сих пор не свободны. Дальше он не спорит, а показывает, каким может быть будущее, — через конкретные штаты, своих детей, Писание и патриотизм. Основное воздействие — пафос и этос; логос короткий, но точный.",
+  best:{
+    L:{t:86, why:"Обещание дано и не выполнено — противоречие между словом и делом страны трудно опровергнуть."},
+    P:{t:194, why:"Абстрактная справедливость становится судьбой четырёх конкретных детей — самый запоминающийся момент речи."},
+    E:{t:40, why:"Опора на Прокламацию и фигуру Линкольна у его же мемориала: авторитет, который уважают все стороны."}
+  }
+},
+{
+  key:"newsroom", tab:"Newsroom", yt:"NMLK2ldPy6o", end:299,
+  title:"«Отдел новостей» (The Newsroom) — «Почему Америка — величайшая страна?»",
+  ctx:{
+    where:"Сериал HBO «Отдел новостей», 1-я серия (2012), сценарий Аарона Соркина. Дискуссия в университете перед студентами.",
+    who:"Уилл Макэвой (актёр Джефф Дэниелс) — популярный телеведущий, известный тем, что никогда не занимает острых позиций. Рядом два оппонента: либерал и консерватор.",
+    aud:"Студенты в зале и модератор. Вопрос задаёт студентка-второкурсница. Важно: это художественный текст — речь заранее написана сценаристом.",
+    goal:"Сначала — уйти от ответа и не испортить имидж «удобного» ведущего. Под давлением модератора — сказать «неудобную правду» и встряхнуть аудиторию."
+  },
+  thesis:{t:151, text:"Америка больше не величайшая страна в мире. Но она была ею и может стать снова, если признает проблему."},
+  groups:[
+    {title:"Вопрос и «правильные» ответы", claim:"Как выглядит позиция без аргумента", items:[
+      {t:0, ttl:"«Одним предложением: почему Америка — величайшая страна?»", why:"Вопрос с готовой предпосылкой: «величайшая» принято как факт, спрашивается только «почему». Отвечающего заранее загоняют в рамку.", a:"N", type:"нагруженный вопрос", nat:["M"], s:1, f:"нагруженный вопрос"},
+      {t:18, ttl:"Оппоненты: «Разнообразие и возможности», «Свобода»", why:"Хрестоматийный пример с занятия: позиция есть, аргумента и доказательства нет. Это лозунги.", a:"N", type:"мнение без основания", nat:["M"], s:1}
+    ]},
+    {title:"Уход от ответа", claim:"Макэвой пытается не занимать позицию", items:[
+      {t:27, ttl:"Шутка: «Нью-Йорк Джетс»", why:"Юмор вместо ответа. Уводит разговор в сторону, но модератор не отпускает.", a:"P", type:"уклонение, юмор", nat:["E"], s:1, f:"уход от ответа"},
+      {t:72, ttl:"«Конституция — шедевр, Мэдисон — гений, Декларация — лучший текст»", why:"Авторитетные источники, но ответ безопасный и уходит от сути. Модератор просит «человеческого» ответа.", a:"E", type:"к авторитету", nat:["M"], s:2}
+    ]},
+    {title:"Удар по оппонентам", claim:"Срыв: сначала достаётся коллегам по панели", items:[
+      {t:108, ttl:"«Почему либералы всегда проигрывают, если они такие умные?»", why:"Атака на людей вместо разбора их мысли. Смешно, но ничего не доказывает.", a:"P", type:"к личности", nat:["E"], s:1, f:"ad hominem"},
+      {t:125, ttl:"Высмеивает идею, что «только у нас есть свобода»", q:"«star-spangled awesome»", why:"Оппонент не говорил, что свобода есть только в США. Макэвой опровергает упрощённую, удобную версию его слов.", a:"P", a2:"L", type:"сарказм", nat:["E"], s:2, f:"соломенное чучело"}
+    ]},
+    {title:"Свобода — не уникальна", claim:"Аргумент «свобода» не работает: она есть почти везде", items:[
+      {t:132, ttl:"Канада, Япония, Великобритания, Франция, Германия, Австралия…", why:"Контрпример: одного списка стран достаточно, чтобы снять аргумент «у нас свобода».", a:"L", type:"контрпример", nat:["F"], s:3},
+      {t:138, ttl:"«Из 207 государств около 180 свободны»", why:"Звучит как статистика, но источника нет, а цифра явно завышена. Уверенная подача делает её «фактом» на слух.", a:"L", type:"к статистике (без источника)", nat:["M"], s:2}
+    ]},
+    {title:"Цифры против мифа", claim:"Нет доказательств, что США — величайшая страна", items:[
+      {t:145, ttl:"Обращение к студентке: «sorority girl»", why:"Снисходительный ярлык вместо уважительного ответа. Ослабляет образ говорящего.", a:"P", type:"к личности", nat:["E"], s:1, f:"ad hominem"},
+      {t:151, ttl:"«Нет никаких доказательств, что мы величайшая страна»", why:"Сильный ход: бремя доказательства переходит на тех, кто утверждает «величайшая». Это и есть главный тезис.", a:"L", type:"к бремени доказательства", nat:["M"], s:3},
+      {t:155, ttl:"7-е по грамотности, 27-е по математике, 49-е по продолжительности жизни, 178-е по детской смертности…", why:"Темп и точные места в рейтингах создают сильное впечатление. Но ни одного источника, ни одного года — проверить на месте нельзя.", a:"L", type:"к статистике", nat:["F","M"], s:3},
+      {t:167, ttl:"Лидеры только по трём показателям: заключённые, вера в ангелов, военные расходы", why:"Статистика с иронией: подбор «лидерств» сам по себе доказывает мысль и вызывает смех.", a:"L", a2:"P", type:"к статистике + ирония", nat:["F","E"], s:3}
+    ]},
+    {title:"Удар по аудитории", claim:"Вывод переносится на конкретного человека", items:[
+      {t:177, ttl:"«Ты не виновата, но твоё поколение — худшее в истории»", why:"Обобщение без доказательств и личный выпад в адрес человека, задавшего вопрос. Сочувствие уходит к студентке.", a:"P", type:"к личности, обобщение", nat:["M","E"], s:1, f:"ad hominem"}
+    ]},
+    {title:"Какой Америка была", claim:"Величие было — значит, оно возможно", items:[
+      {t:206, ttl:"Боролись за правое дело, воевали с бедностью, а не с бедными", why:"Ностальгия: прошлое идеализировано. В то же время была сегрегация (см. речь Кинга).", a:"P", type:"к традиции, к прошлому", nat:["M","E"], s:2},
+      {t:226, ttl:"Строили великое, исследовали космос, лечили болезни", why:"За образом стоят реальные факты (космос, медицина), но они поданы без конкретики.", a:"P", a2:"L", type:"к истории", nat:["F","E"], s:2},
+      {t:243, ttl:"Ценили интеллект, не пугались, не делились по тому, кто за кого голосовал", why:"Противопоставление «тогда» и «сейчас» — эмоциональный упрёк современности.", a:"P", type:"к прошлому, к контрасту", nat:["M"], s:2},
+      {t:262, ttl:"«Нас вели великие, уважаемые люди»", why:"Ссылка на авторитет без единого имени — проверить нечего.", a:"E", type:"к авторитету (безымянному)", nat:["M"], s:1}
+    ]}
+  ],
+  concl:{t:273, ttl:"«Первый шаг к решению проблемы — признать, что она есть»", why:"Конструктивный финал смягчает резкость всей речи и превращает критику в призыв к действию.", a:"L", a2:"E", type:"вывод", nat:["M"], s:3},
+  formula:"<b>Тезис</b> (не величайшая) → <b>аргументы</b> (свобода не уникальна, доказательств нет) → <b>доказательства</b> (список стран, рейтинги) → <b>вывод</b> (была великой — признай проблему).",
+  summary:"Макэвой под давлением отказывается от «удобного» ответа и доказывает, что Америка больше не величайшая страна. Сильнейшие ходы — логические: контрпример со свободой в других странах и поток рейтингов. Но цифры даны без источников, «величие» не определено, а выпады на личности ослабляют позицию. Финал — ностальгия и конструктивный призыв признать проблему.",
+  best:{
+    L:{t:132, why:"Список свободных стран одним ходом снимает аргумент «у нас свобода» — классический контрпример."},
+    P:{t:206, why:"Ностальгия по Америке, которая «воевала с бедностью, а не с бедными», — сильный эмоциональный контраст «тогда и сейчас»."},
+    E:{t:273, why:"Признать проблему — первый шаг: герой выглядит честным человеком, который говорит неудобную правду, а не просто критикует."}
+  }
+},
+{
+  key:"ali", tab:"Али", yt:"9S8VwT2CEAA", end:563,
+  title:"Мухаммед Али — «Что я буду делать после бокса»",
+  ctx:{
+    where:"Телевизионная программа, студия со зрителями. По контексту — Великобритания, около 1977 г. (Али говорит, что ему 35 лет).",
+    who:"Мухаммед Али — чемпион мира по боксу в тяжёлом весе, одна из самых узнаваемых фигур планеты, мусульманин.",
+    aud:"Ведущий, зрители в студии и телезрители — люди разных взглядов, в том числе неверующие.",
+    goal:"Ответить на простой вопрос «чем займётесь после бокса?» и превратить ответ в проповедь: главное в жизни — подготовиться к вечности и помогать людям."
+  },
+  thesis:{t:548, text:"После бокса нужно не зарабатывать, а помогать людям и готовиться к встрече с Богом, потому что жизнь коротка, а за ней — вечность."},
+  groups:[
+    {title:"Вопрос и разогрев", claim:"Контакт с аудиторией", items:[
+      {t:0, ttl:"Вопрос ведущего: «Что вы будете делать, когда уйдёте из бокса?»", why:"Исходная точка. Тезис прозвучит только в самом конце — подача индуктивная: от фактов к выводу.", a:"N", type:"контекст", nat:["F"], s:2},
+      {t:14, ttl:"Шутка: «Буду просто спать»", why:"Юмор располагает зал и снимает напряжение перед серьёзной темой.", a:"E", a2:"P", type:"юмор", nat:["E"], s:2}
+    ]},
+    {title:"Жизнь короче, чем кажется", claim:"Из 30 лет реально «живёшь» лишь половину", items:[
+      {t:24, ttl:"«Жизнь на самом деле не такая длинная» — сейчас докажу", why:"Сначала промежуточный тезис, затем обещание доказательства — правильная структура.", a:"L", type:"промежуточный тезис", nat:["M"], s:2},
+      {t:33, ttl:"Сон: около 8 лет из 30", why:"Расчёт, который каждый может проверить на себе: человек спит около трети жизни.", a:"L", type:"к факту, расчёт", nat:["F"], s:3},
+      {t:58, ttl:"Дорога: около 2 лет", why:"Грубая оценка, но правдоподобная и понятная каждому.", a:"L", type:"расчёт (оценка)", nat:["M"], s:2},
+      {t:77, ttl:"Школа: 6 часов в день × 12 лет ≈ 3 года без перерыва", why:"Самый проверяемый расчёт — с цифрами и вовлечением ведущего.", a:"L", type:"к факту, расчёт", nat:["F"], s:3},
+      {t:99, ttl:"Развлечения: кино, спорт, театр — около 2 лет", why:"Оценка «на глаз», но итог узнаваем.", a:"L", type:"расчёт (оценка)", nat:["M"], s:2},
+      {t:110, ttl:"«Старшие подтвердят»: дети, дом — и тебе уже под 60", why:"Обращение к жизненному опыту зала: вывод подтверждают сами слушатели.", a:"E", type:"к опыту аудитории", nat:["M"], s:2},
+      {t:125, ttl:"Итог: полжизни «ничего не делаешь»", why:"Сильное обобщение. Сон и школа — не «ничего», это преувеличение для эффекта.", a:"P", a2:"L", type:"обобщение, гипербола", nat:["M"], s:2},
+      {t:130, ttl:"Личный расчёт: мне 35 → осталось около 16 продуктивных лет", why:"Переносит расчёт на себя — пример личной честности. Но цифры непоследовательны: только что сна было 8 лет из 30, теперь 9.", a:"L", a2:"E", type:"к личному примеру, расчёт", nat:["F","M"], s:3}
+    ]},
+    {title:"Мост: на что потратить 16 лет", claim:"Материальное не поможет", items:[
+      {t:178, ttl:"Недвижимость, бизнес, тренерство «не приведут в рай»", why:"Утверждение без доказательства — связка, которая переводит разговор от времени к вере.", a:"N", type:"утверждение", nat:["M"], s:1}
+    ]},
+    {title:"Бог существует", claim:"У всего созданного есть создатель", items:[
+      {t:192, ttl:"Вопросы в зал: «Кто верит в Бога? А кто нет?»", why:"Вовлекает аудиторию и выявляет скептиков, к которым дальше обращается напрямую.", a:"P", a2:"E", type:"вовлечение аудитории", nat:["E"], s:2},
+      {t:215, ttl:"Стакан не мог появиться сам", why:"Классический «аргумент часовщика»: если вещь сложная, у неё есть создатель. Просто и наглядно.", a:"L", type:"к аналогии", nat:["M"], s:3},
+      {t:238, ttl:"Телестудия, одежда, здание тоже не создали себя сами", why:"Серия аналогий усиливает эффект — зал соглашается с каждым примером.", a:"L", type:"к аналогии", nat:["M"], s:2},
+      {t:262, ttl:"Значит, Солнце, Луну и планеты тоже кто-то создал", why:"Вывод по аналогии. Логически уязвим: созданный человеком предмет и природа — не одно и то же.", a:"L", type:"вывод по аналогии", nat:["M"], s:2}
+    ]},
+    {title:"Будет суд", claim:"Каждый ответит за свои поступки", items:[
+      {t:275, ttl:"«Неужели Гитлер уйдёт безнаказанным?»", why:"Сильный моральный пример. Но из желания, чтобы зло было наказано, не следует, что наказание будет.", a:"P", type:"к справедливости", nat:["E"], s:2},
+      {t:288, ttl:"«Мой самолёт может взорваться — люди умирают каждый день»", why:"Факт о смерти превращён в ощущение срочности.", a:"P", type:"к факту + к страху", nat:["F","E"], s:2}
+    ]},
+    {title:"Помогать людям", claim:"Богу важно, как мы относимся друг к другу", items:[
+      {t:312, ttl:"«Я здесь, потому что этому человеку нужна помощь»", why:"Слова подтверждены делом прямо в эфире — сильнейший этос.", a:"E", type:"к личному примеру", nat:["F"], s:3},
+      {t:328, ttl:"«Богу всё равно, что я победил Джо Фрейзера»", why:"Чемпион обесценивает собственную победу — неожиданно и потому убедительно.", a:"E", a2:"P", type:"к ценностям", nat:["M"], s:3},
+      {t:342, ttl:"Посвятит имя и популярность благотворительности и миру между религиями", why:"Ясное обещание, но без конкретики: какие фонды, какие цели.", a:"E", type:"к ценностям, обещание", nat:["M"], s:2}
+    ]},
+    {title:"Земная жизнь — временна", claim:"Мы здесь ненадолго и ничем не владеем", items:[
+      {t:360, ttl:"«Все в этом зале умрут — через 20, 50, 70 лет»", why:"Неопровержимый факт, сказанный прямо в лицо аудитории.", a:"L", a2:"P", type:"к факту", nat:["F"], s:2},
+      {t:378, ttl:"«Даже если прожить 250 лет…»", why:"Гипербола с юмором: смех снимает напряжение, а мысль остаётся.", a:"P", type:"гипербола, юмор", nat:["E"], s:2},
+      {t:395, ttl:"Тело стареет — зубы, волосы. Душа вечна", why:"Узнаваемое наблюдение плюс утверждение веры. Первая часть — факт, вторая — мнение.", a:"P", type:"к наблюдению + к вере", nat:["F","M"], s:2},
+      {t:418, ttl:"Здание переживёт строителя, короли Англии умерли", why:"Исторические примеры подтверждают мысль о временности — уместно для британской аудитории.", a:"L", type:"к истории, к примеру", nat:["F"], s:2},
+      {t:452, ttl:"«Я развёлся — мои дети называют папой другого»", why:"Самый сильный момент: чемпион мира честно говорит о собственной потере. Доверие к нему резко растёт.", a:"E", a2:"P", type:"к личному опыту", nat:["F","E"], s:3}
+    ]},
+    {title:"Вечность и страх", claim:"Рай или ад — это навсегда", items:[
+      {t:466, ttl:"«Самое важное — что будет, когда умрёшь»", why:"Возврат к главной мысли перед кульминацией.", a:"N", type:"утверждение", nat:["M"], s:2},
+      {t:475, ttl:"Сахара: одна песчинка раз в тысячу лет — и это ещё не вечность", why:"Очень сильный образ: бесконечность становится почти осязаемой.", a:"P", type:"к образу, к аналогии", nat:["E"], s:3},
+      {t:517, ttl:"«Америке нет и 200 лет»", why:"Сравнение с понятным масштабом показывает, насколько тысяча лет огромна.", a:"L", a2:"P", type:"сравнение", nat:["F"], s:2},
+      {t:535, ttl:"Полиция, ФБР, Скотленд-Ярд могут не поймать, но «кто-то наблюдает»", why:"Аналогия с полицией и сильное давление страхом. Действует на эмоции, а не на логику.", a:"P", type:"к аналогии + к страху", nat:["E"], s:2, f:"апелляция к страху"}
+    ]}
+  ],
+  concl:{t:548, ttl:"«16 продуктивных лет — готовиться к встрече с Богом. Разве это не логично?»", why:"Вывод возвращает к самому первому расчёту и замыкает рассуждение. Риторический вопрос приглашает согласиться.", a:"L", a2:"P", type:"вывод + риторический вопрос", nat:["M"], s:3},
+  formula:"<b>Вопрос</b> → <b>аргумент</b> (жизнь коротка — расчёт) → <b>аргумент</b> (Бог есть — аналогия) → <b>аргумент</b> (будет суд и вечность) → <b>вывод</b> (готовиться и помогать). Тезис звучит в конце — индуктивная подача.",
+  summary:"Простой вопрос «что будете делать после бокса?» Али превращает в проповедь. Сначала он «считает» жизнь и показывает, что продуктивных лет немного, затем через аналогии доказывает существование Бога и приходит к выводу: готовиться к вечности и помогать людям. Внешне речь логична, но держится на пафосе (страх, образ вечности) и этосе (личная честность, юмор).",
+  best:{
+    L:{t:77, why:"6 часов в день × 12 лет ≈ 3 года за партой — расчёт, который каждый может проверить на себе."},
+    P:{t:475, why:"Песчинка из Сахары раз в тысячу лет — бесконечность становится почти осязаемой."},
+    E:{t:452, why:"Чемпион мира честно говорит о разводе и детях, которые зовут папой другого, — доверие к нему резко растёт."}
+  }
+}
+];
+
+/* ---------- утилиты ---------- */
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = t=>{t=Math.max(0,Math.floor(t));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
+const ytUrl = (id,t)=>`https://www.youtube.com/watch?v=${id}&t=${Math.floor(t||0)}s`;
+const strength = s=>"●".repeat(s)+"○".repeat(3-s);
+const STRN = {1:"слабый",2:"средний",3:"сильный"};
+
+function chips(it){
+  let h = `<span class="chip ap ${it.a}">${APPEAL[it.a].name}</span>`;
+  if(it.a2) h += `<span class="chip ap sec ${it.a2}">+ ${APPEAL[it.a2].name}</span>`;
+  h += `<span class="chip">${esc(it.type)}</span>`;
+  (it.nat||[]).forEach(n=>h+=`<span class="chip">${NAT[n]}</span>`);
+  h += `<span class="chip str" title="Сила аргумента: ${STRN[it.s]}">${strength(it.s)}</span>`;
+  if(it.f) h += `<span class="chip f">⚠ Уловка: ${esc(it.f)}</span>`;
+  return `<div class="chips">${h}</div>`;
+}
+
+/* плоский список элементов по времени */
+VIDEOS.forEach(v=>{
+  const flat=[];
+  v.groups.forEach((g,gi)=>g.items.forEach(it=>{it.g=gi;flat.push(it)}));
+  v.concl.g=-1; flat.push(v.concl);
+  flat.sort((a,b)=>a.t-b.t);
+  flat.forEach((it,i)=>{it.n=i+1;it.end=(flat[i+1]?flat[i+1].t:v.end)});
+  v.flat=flat;
+});
+
+/* ---------- отрисовка ---------- */
+const tabsEl=$("#tabs"), panelsEl=$("#panels");
+const TABS=[...VIDEOS.map(v=>({key:v.key,label:v.tab})),{key:"summary",label:"Итоги"}];
+TABS.forEach((t,i)=>{
+  const b=document.createElement("button");
+  b.className="tab";b.setAttribute("role","tab");b.dataset.key=t.key;
+  b.innerHTML=`<span class="k">${i+1}</span>${esc(t.label)}`;
+  b.onclick=()=>showTab(t.key);
+  tabsEl.appendChild(b);
+});
+
+function itemHTML(v,it){
+  return `<li class="item" data-v="${v.key}" data-n="${it.n}">
+    <div class="time">${fmt(it.t)}<span class="n">#${it.n}</span></div>
+    <div><div class="ttl">${esc(it.ttl)}</div>${it.q?`<div class="q">${esc(it.q)}</div>`:""}<div class="why">${esc(it.why)}</div>${chips(it)}</div>
+  </li>`;
+}
+
+VIDEOS.forEach(v=>{
+  const sec=document.createElement("section");
+  sec.className="panel";sec.id="p-"+v.key;
+  const segs=v.flat.map(it=>`<div class="seg ${it.a}${it.f?" f":""}" data-n="${it.n}" style="left:${it.t/v.end*100}%;width:${(it.end-it.t)/v.end*100}%" title="${fmt(it.t)} · ${esc(it.ttl)}"></div>`).join("");
+  sec.innerHTML=`
+    <div class="ctx">
+      <div class="c"><h4>Где и когда</h4><p>${esc(v.ctx.where)}</p></div>
+      <div class="c"><h4>Кто говорит</h4><p>${esc(v.ctx.who)}</p></div>
+      <div class="c"><h4>Аудитория</h4><p>${esc(v.ctx.aud)}</p></div>
+      <div class="c"><h4>Цель спикера</h4><p>${esc(v.ctx.goal)}</p></div>
+    </div>
+    <div class="thesis" data-t="${v.thesis.t}" title="Перейти к моменту">
+      <span class="lbl">Главный тезис</span><span class="txt">${esc(v.thesis.text)}</span><span class="tt">▶ ${fmt(v.thesis.t)}</span>
+    </div>
+    <div class="grid">
+      <div class="left">
+        <div class="player"><div id="yt-${v.key}"></div>
+          <div class="err" id="err-${v.key}"><div>Видео не загрузилось во встроенном плеере.<br><a href="${ytUrl(v.yt,0)}" target="_blank" rel="noopener">Открыть на YouTube ↗</a><br><small>Клики по аргументам откроют YouTube на нужной секунде.</small></div></div>
+        </div>
+        <div class="tl">
+          <div class="tlbar" id="tl-${v.key}">${segs}<div class="head-line" id="hd-${v.key}"></div></div>
+          <div class="tlx"><span id="tm-${v.key}">0:00 / ${fmt(v.end)}</span>
+            <span class="legend"><span><i class="sw L"></i>Логос</span><span><i class="sw E"></i>Этос</span><span><i class="sw P"></i>Пафос</span><span><i class="sw N"></i>Без основания</span><span><i class="sw f"></i>Уловка</span></span></div>
+        </div>
+        <div class="now" id="now-${v.key}"><div class="empty">Нажмите ▶ или выберите аргумент справа — здесь появится разбор текущего момента.</div></div>
+        <div class="ctrls">
+          <button class="iconbtn" data-act="prev" data-v="${v.key}">← Пред.</button>
+          <button class="iconbtn" data-act="play" data-v="${v.key}">▶ / ❚❚</button>
+          <button class="iconbtn" data-act="next" data-v="${v.key}">След. →</button>
+          <label><input type="checkbox" id="follow-${v.key}" checked> Прокручивать список за видео</label>
+        </div>
+      </div>
+      <div class="tree">
+        ${v.groups.map((g,gi)=>`<div class="group">
+          <div class="ghead"><span class="gn">Аргумент ${gi+1}</span><div><h3>${esc(g.title)}</h3><div class="gc">${esc(g.claim)}</div></div></div>
+          <ul class="items">${g.items.map(it=>itemHTML(v,it)).join("")}</ul></div>`).join("")}
+        <div class="group concl">
+          <div class="ghead"><span class="gn">Вывод</span><div><h3>Итог выступления</h3></div></div>
+          <ul class="items">${itemHTML(v,v.concl)}</ul></div>
+      </div>
+    </div>
+    <p class="formula">Структура: ${v.formula}</p>
+    <div class="sumv">
+      <div class="box"><h3>Кратко о выступлении</h3><p>${esc(v.summary)}</p></div>
+      <div class="bestgrid">${["L","P","E"].map(k=>{const b=v.best[k];const it=v.flat.find(x=>x.t===b.t);
+        return `<div class="best ${k}" data-v="${v.key}" data-n="${it.n}"><div class="bh"><span class="chip ap ${k}">${APPEAL[k].name}</span><span class="bl">лучший аргумент · ▶ ${fmt(it.t)}</span></div><div class="ttl">${esc(it.ttl)}</div><p>${esc(b.why)}</p></div>`}).join("")}</div>
+    </div>`;
+  panelsEl.appendChild(sec);
+});
+
+/* итоги */
+(function(){
+  const sec=document.createElement("section");
+  sec.className="panel";sec.id="p-summary";
+  const bars=VIDEOS.map(v=>{
+    const acc={L:0,E:0,P:0,N:0};let fal=0;
+    v.flat.forEach(it=>{acc[it.a]+=it.end-it.t;if(it.f)fal++});
+    const tot=Object.values(acc).reduce((a,b)=>a+b,0);
+    const parts=["L","E","P","N"].filter(k=>acc[k]>0).map(k=>{const p=Math.round(acc[k]/tot*100);return `<div class="${k}" style="width:${acc[k]/tot*100}%" title="${APPEAL[k].name}: ${p}%">${p>=8?APPEAL[k].name+" "+p+"%":""}</div>`}).join("");
+    return `<div class="row"><div class="nm"><span>${esc(v.title)}</span><span style="color:var(--muted)">${v.flat.length} элем. · уловок: ${fal}</span></div><div class="stack">${parts}</div></div>`;
+  }).join("");
+  sec.innerHTML=`
+    <p class="intro">Доля времени выступления по основному виду воздействия (считается по таймкодам разбора: каждый момент отнесён к его главному типу).</p>
+    <div class="box bars">${bars}
+      <div class="legend" style="font-size:13px;color:var(--muted);margin-top:6px"><span><i class="sw L"></i>Логос</span><span><i class="sw E"></i>Этос</span><span><i class="sw P"></i>Пафос</span><span><i class="sw N"></i>Без основания</span></div>
+    </div>
+
+    <h2 class="sec">Сравнение трёх выступлений</h2>
+    <div class="box tbl"><table>
+      <thead><tr><th></th><th>Кинг</th><th>«Отдел новостей»</th><th>Али</th></tr></thead>
+      <tbody>
+        <tr><td>Главный вид</td><td>Пафос + этос (к ценностям, к традиции)</td><td>Логос (статистика, контрпример) + выпады на личности</td><td>Пафос (страх, вера) в форме логоса (расчёт, аналогия)</td></tr>
+        <tr><td>Подача тезиса</td><td>Через противоречие «обещали — не сделали»</td><td>Прямо, в лоб, после давления</td><td>В самом конце (индуктивно)</td></tr>
+        <tr><td>Сильнейший аргумент</td><td>Декларация и Прокламация: живите по своим правилам</td><td>Свобода есть и в других странах</td><td>Личный опыт (развод, дети) и «арифметика жизни»</td></tr>
+        <tr><td>Слабое место</td><td>Исторические факты есть, конкретных цифр нет</td><td>Нет критериев «величия», цифры без источников, оскорбления</td><td>Разрыв между «жизнь коротка» и «есть Бог и суд»</td></tr>
+        <tr><td>Уловки</td><td>Не найдено</td><td>Нагруженный вопрос, уход от ответа, ad hominem ×3, соломенное чучело</td><td>Апелляция к страху</td></tr>
+      </tbody></table></div>
+
+
+    <h2 class="sec">Как читать разметку</h2>
+    <div class="gloss">
+      <div class="box"><h3><i class="sw L"></i>Логос</h3><p>Убеждение логикой: факты, статистика, расчёт, причина и следствие, аналогия, контрпример.</p></div>
+      <div class="box"><h3><i class="sw E"></i>Этос</h3><p>Убеждение доверием: авторитет, личный пример, репутация, честность говорящего.</p></div>
+      <div class="box"><h3><i class="sw P"></i>Пафос</h3><p>Убеждение эмоциями: образы, метафоры, страх, надежда, юмор, обращение к ценностям и традиции.</p></div>
+      <div class="box"><h3><i class="sw N"></i>Без основания</h3><p>Мнение или лозунг, за которым нет аргумента («я так считаю»).</p></div>
+      <div class="box"><h3><i class="sw f"></i>Уловка</h3><p>Приём, который выглядит как аргумент, но подменяет его: ad hominem, соломенное чучело, апелляция к страху, нагруженный вопрос.</p></div>
+      <div class="box"><h3>●●● Сила</h3><p>Моя оценка убедительности: ●○○ слабый, ●●○ средний, ●●● сильный. Метки «Факт / Мнение / Эмоция» показывают природу утверждения.</p></div>
+    </div>`;
+  panelsEl.appendChild(sec);
+})();
+
+/* ---------- плеер ---------- */
+const players={}, state={};
+let current=null, apiReady=false, apiFailed=false;
+VIDEOS.forEach(v=>state[v.key]={active:null});
+
+window.onYouTubeIframeAPIReady=()=>{apiReady=true;if(current&&VIDEOS.find(v=>v.key===current))makePlayer(current)};
+(function(){
+  const s=document.createElement("script");
+  s.src="https://www.youtube.com/iframe_api";
+  s.onerror=()=>{apiFailed=true;VIDEOS.forEach(v=>$("#err-"+v.key).classList.add("show"))};
+  document.head.appendChild(s);
+})();
+
+function makePlayer(key){
+  if(players[key]||!apiReady)return;
+  const v=VIDEOS.find(x=>x.key===key);
+  const fail=()=>{$("#err-"+key).classList.add("show");players[key].broken=true};
+  const opts={videoId:v.yt,playerVars:{rel:0,modestbranding:1,playsinline:1},
+    events:{
+      onReady:()=>{const p=players[key];p.ready=true;$("#err-"+key).classList.remove("show");
+        if(p.pending!=null){p.seekTo(p.pending,true);p.playVideo();p.pending=null}},
+      onError:fail}};
+  if(location.protocol.startsWith("http"))opts.playerVars.origin=location.origin;
+  players[key]=new YT.Player("yt-"+key,opts);
+  setTimeout(()=>{if(!players[key].ready)fail()},12000);
+}
+function playerOk(key){const p=players[key];return p&&p.ready&&!p.broken}
+
+function seek(key,t){
+  const v=VIDEOS.find(x=>x.key===key), p=players[key];
+  if(playerOk(key)){p.seekTo(t,true);p.playVideo();setActive(key,t,true)}
+  else if(p&&!p.broken&&!apiFailed){p.pending=t;setActive(key,t,true)}
+  else window.open(ytUrl(v.yt,t),"_blank","noopener");
+}
+
+function setActive(key,t,fromClick){
+  const v=VIDEOS.find(x=>x.key===key);
+  let it=null;for(const x of v.flat){if(x.t<=t+0.3)it=x;else break}
+  $("#hd-"+key).style.left=(Math.min(t,v.end)/v.end*100)+"%";
+  $("#tm-"+key).textContent=fmt(t)+" / "+fmt(v.end);
+  if(!it||state[key].active===it.n)return;
+  state[key].active=it.n;
+  const sec=$("#p-"+key);
+  sec.querySelectorAll(".item.on,.seg.on").forEach(e=>e.classList.remove("on"));
+  sec.querySelectorAll(`[data-n="${it.n}"]`).forEach(e=>e.classList.add("on"));
+  const g=it.g>=0?`Аргумент ${it.g+1} · ${esc(v.groups[it.g].title)}`:"Вывод";
+  const now=$("#now-"+key);
+  now.className="now "+it.a;
+  now.innerHTML=`<div class="grp">${g} · #${it.n} · ${fmt(it.t)}</div><h3>${esc(it.ttl)}</h3>${chips(it)}<p>${esc(it.why)}</p>`;
+  const el=sec.querySelector(`.item[data-n="${it.n}"]`);
+  if(el&&!fromClick&&$("#follow-"+key).checked){
+    const r=el.getBoundingClientRect();
+    if(r.top<120||r.bottom>innerHeight-20)el.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+
+setInterval(()=>{
+  if(!current||!playerOk(current))return;
+  const p=players[current];
+  try{
+    if(p.getPlayerState&&p.getPlayerState()===1)setActive(current,p.getCurrentTime());
+  }catch(e){}
+},250);
+
+/* ---------- события ---------- */
+document.addEventListener("click",e=>{
+  const it=e.target.closest(".item,.best");
+  if(it){const v=VIDEOS.find(x=>x.key===it.dataset.v);seek(v.key,v.flat[it.dataset.n-1].t);return}
+  const th=e.target.closest(".thesis");
+  if(th){seek(current,+th.dataset.t);return}
+  const tl=e.target.closest(".tlbar");
+  if(tl){const key=tl.id.slice(3),v=VIDEOS.find(x=>x.key===key);const r=tl.getBoundingClientRect();
+    const t=(e.clientX-r.left)/r.width*v.end;
+    const seg=e.target.closest(".seg");
+    seek(key,seg?v.flat[seg.dataset.n-1].t:t);return}
+  const b=e.target.closest("[data-act]");
+  if(b)control(b.dataset.v,b.dataset.act);
+});
+
+function control(key,act){
+  const v=VIDEOS.find(x=>x.key===key);
+  if(act==="play"){
+    if(!playerOk(key)){const p=players[key];if(p&&!p.broken&&!apiFailed)p.pending=p.pending??0;else window.open(ytUrl(v.yt,0),"_blank","noopener");return}
+    const p=players[key];p.getPlayerState()===1?p.pauseVideo():p.playVideo();return;
+  }
+  const cur=state[key].active||0;
+  const n=act==="next"?Math.min(cur+1,v.flat.length):Math.max(cur-1,1);
+  const t=v.flat[n-1].t;
+  if(playerOk(key)){players[key].seekTo(t,true);setActive(key,t);
+    const el=$(`#p-${key} .item[data-n="${n}"]`);if(el)el.scrollIntoView({behavior:"smooth",block:"center"})}
+  else seek(key,t);
+}
+
+function showTab(key){
+  if(current&&playerOk(current)&&current!==key){try{players[current].pauseVideo()}catch(e){}}
+  current=key;
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.key===key));
+  document.querySelectorAll("section.panel").forEach(s=>s.classList.toggle("show",s.id==="p-"+key));
+  if(VIDEOS.find(v=>v.key===key))makePlayer(key);
+  try{localStorage.setItem("argTab",key)}catch(e){}
+  if(history.replaceState)history.replaceState(null,"","#"+key);
+  window.scrollTo({top:0});
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.target.closest("input,textarea"))return;
+  const i=parseInt(e.key,10);
+  if(i>=1&&i<=TABS.length){showTab(TABS[i-1].key);return}
+  if(!VIDEOS.find(v=>v.key===current))return;
+  if(e.key==="ArrowRight"){control(current,"next");e.preventDefault()}
+  else if(e.key==="ArrowLeft"){control(current,"prev");e.preventDefault()}
+  else if(e.key===" "&&!e.target.closest("button")){control(current,"play");e.preventDefault()}
+});
+
+/* тема */
+$("#themeBtn").onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+  try{localStorage.setItem("argTheme",r.dataset.theme)}catch(e){}
+};
+try{const th=localStorage.getItem("argTheme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+
+if(location.protocol==="file:")$("#fileBanner").classList.add("show");
+
+let start=(location.hash||"").slice(1);
+if(!TABS.find(t=>t.key===start)){try{start=localStorage.getItem("argTab")||""}catch(e){start=""}}
+showTab(TABS.find(t=>t.key===start)?start:"king");
+</script>
+</body>
+</html>

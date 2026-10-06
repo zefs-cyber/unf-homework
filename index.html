@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>УНФ · Домашние задания</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{const th=localStorage.getItem("argTheme");if(th)document.documentElement.dataset.theme=th}catch(e){}</script>
+<style>
+/* Боковое меню слева + выбранное ДЗ во всю оставшуюся ширину */
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#f0eee9; --text:#1c1b19; --muted:#6b675f; --line:#e2dfd8;
+  --active:#fff7d6; --active-line:#e0b400;
+  --side-w:300px; --side-w-min:68px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+    --active:#3a3317; --active-line:#e0b400; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+  --active:#3a3317; --active-line:#e0b400; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font-family:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.45;display:flex;overflow:hidden}
+button{font:inherit;color:inherit}
+a{color:inherit}
+
+aside{width:var(--side-w);flex:none;height:100%;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;transition:width .18s ease;overflow:hidden}
+.brand{padding:18px 18px 14px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;min-height:76px}
+.badge{flex:none;width:36px;height:36px;border-radius:9px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:13px;letter-spacing:.02em}
+.brand .t{min-width:0}
+.brand .t b{display:block;font-size:15px;line-height:1.25}
+.brand .t span{display:block;font-size:13px;color:var(--muted)}
+
+nav{flex:1;overflow-y:auto;padding:10px 10px 16px}
+details{margin-bottom:6px}
+summary{list-style:none;cursor:pointer;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";font-size:11px;transition:transform .15s}
+details[open] > summary::before{transform:rotate(90deg)}
+summary:hover{color:var(--text)}
+summary .cnt{margin-left:auto;font-weight:500}
+.hw{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:9px 10px;border-radius:10px;text-decoration:none;border:2px solid transparent;margin:2px 0}
+.hw:hover{background:var(--surface-2)}
+.hw.on{background:var(--active);border-color:var(--active-line)}
+.hw .d{font-variant-numeric:tabular-nums;font-weight:600;font-size:13px;color:var(--muted);padding-top:1px}
+.hw .d small{display:block;font-weight:500;font-size:11px}
+.hw .ti{display:block;font-weight:600;line-height:1.3}
+.hw .st{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+
+.foot{border-top:1px solid var(--line);padding:10px;display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.btn:hover{color:var(--text)}
+.btn:focus-visible,.hw:focus-visible,summary:focus-visible{outline:2px solid var(--active-line);outline-offset:2px}
+
+/* свёрнутое меню (только на широком экране) */
+@media (min-width:901px){
+body.collapsed aside{width:var(--side-w-min)}
+body.collapsed .brand{padding:18px 16px 14px}
+body.collapsed .brand .t,body.collapsed summary,body.collapsed .hw .ti,body.collapsed .hw .st,body.collapsed .foot .lbl{display:none}
+body.collapsed nav{padding:10px 8px}
+body.collapsed details{display:block}
+body.collapsed details:not([open]) > .hw{display:grid}
+body.collapsed .hw{grid-template-columns:1fr;padding:8px 4px;text-align:center}
+body.collapsed .foot{flex-direction:column;align-items:center}
+
+}
+main{flex:1;min-width:0;height:100%;display:flex;flex-direction:column}
+.topbar{display:none;align-items:center;gap:10px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.topbar .ttl{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+iframe{flex:1;width:100%;border:0;background:var(--bg)}
+.empty{flex:1;display:grid;place-items:center;color:var(--muted);padding:24px;text-align:center}
+.scrim{display:none}
+
+@media (max-width:900px){
+  .topbar{display:flex}
+  aside{position:fixed;z-index:40;left:0;top:0;bottom:0;width:min(86vw,var(--side-w));transform:translateX(-100%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,.25);padding-top:env(safe-area-inset-top,0px)}
+  body.menu aside{transform:none}
+  body.menu .scrim{display:block;position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35)}
+  #collapseBtn{display:none}
+}
+@media (prefers-reduced-motion:reduce){aside,summary::before{transition:none}}
+</style>
+</head>
+<body>
+<aside id="side" aria-label="Домашние задания">
+  <div class="brand"><div class="badge" id="badge"></div><div class="t"><b id="courseTitle"></b><span id="student"></span></div></div>
+  <nav id="nav"></nav>
+  <div class="foot">
+    <button class="btn" id="collapseBtn" title="Свернуть меню">⇤ <span class="lbl">Свернуть</span></button>
+    <button class="btn" id="themeBtn" title="Сменить тему">◐ <span class="lbl">Тема</span></button>
+    <a class="btn" id="openBtn" target="_blank" rel="noopener" title="Открыть ДЗ отдельно">↗ <span class="lbl">Отдельно</span></a>
+  </div>
+</aside>
+<div class="scrim" id="scrim"></div>
+<main>
+  <div class="topbar"><button class="btn" id="menuBtn" aria-label="Открыть меню">☰</button><span class="ttl" id="topTitle"></span></div>
+  <iframe id="frame" title="Домашнее задание" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</main>
+
+<script src="homeworks.js"></script>
+<script>
+const C=window.COURSE||{}, MODS=window.MODULES||[], HWS=(window.HOMEWORKS||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dm=d=>{const [y,m,dd]=d.split("-");return dd+"."+m};
+
+$("#badge").textContent=C.short||"ДЗ";
+$("#courseTitle").textContent=C.title||"";
+$("#student").textContent=C.student||"";
+
+/* меню по модулям; модуль без описания попадает в «Прочее» */
+const groups=MODS.map(m=>({...m,items:HWS.filter(h=>h.module===m.id)}));
+const rest=HWS.filter(h=>!MODS.some(m=>m.id===h.module));
+if(rest.length)groups.push({id:"_",title:"Прочее",items:rest});
+$("#nav").innerHTML=groups.filter(g=>g.items.length).map(g=>`
+  <details open><summary>${esc(g.title)}<span class="cnt">${g.items.length}</span></summary>
+  ${g.items.map(h=>`<a class="hw" href="#${esc(h.id)}" data-id="${esc(h.id)}" title="${esc(h.title)}">
+    <span class="d">${dm(h.date)}<small>${esc(h.type||"")}</small></span>
+    <span><span class="ti">${esc(h.title)}</span>${h.subtitle?`<span class="st">${esc(h.subtitle)}</span>`:""}</span></a>`).join("")}
+  </details>`).join("");
+
+function show(id){
+  const h=HWS.find(x=>x.id===id)||HWS[0];
+  if(!h){$("#frame").replaceWith(Object.assign(document.createElement("div"),{className:"empty",textContent:"Пока нет ни одного задания. Добавьте его в homeworks.js."}));return}
+  const f=$("#frame");
+  if(f.dataset.id!==h.id){f.dataset.id=h.id;f.src=h.path}
+  document.querySelectorAll(".hw").forEach(a=>a.classList.toggle("on",a.dataset.id===h.id));
+  $("#openBtn").href=h.path;
+  $("#topTitle").textContent=h.title;
+  document.title=h.title+" · "+(C.short||"ДЗ");
+  document.body.classList.remove("menu");
+}
+addEventListener("hashchange",()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+/* свернуть / развернуть */
+try{if(localStorage.getItem("unfCollapsed")==="1")document.body.classList.add("collapsed")}catch(e){}
+$("#collapseBtn").onclick=()=>{
+  const on=document.body.classList.toggle("collapsed");
+  $("#collapseBtn").firstChild.textContent=on?"⇥ ":"⇤ ";
+  try{localStorage.setItem("unfCollapsed",on?"1":"0")}catch(e){}
+};
+if(document.body.classList.contains("collapsed"))$("#collapseBtn").firstChild.textContent="⇥ ";
+$("#menuBtn").onclick=()=>document.body.classList.add("menu");
+$("#scrim").onclick=()=>document.body.classList.remove("menu");
+addEventListener("keydown",e=>{if(e.key==="Escape")document.body.classList.remove("menu")});
+
+/* тема: общая для меню и открытого ДЗ */
+$("#themeBtn").onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+  try{localStorage.setItem("argTheme",r.dataset.theme)}catch(e){}
+  try{$("#frame").contentDocument.documentElement.dataset.theme=r.dataset.theme}catch(e){}
+};
+</script>
+</body>
+</html>
