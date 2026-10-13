@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Рефрейминг</title>
+<script>try{if(window.top!==window.self)document.documentElement.classList.add("embedded");const th=localStorage.getItem("argTheme");if(th)document.documentElement.dataset.theme=th}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#f0eee9; --text:#1c1b19; --muted:#6b675f; --line:#e2dfd8;
+  --bad:#c0392b; --good:#1f7a4d; --good-bg:#e5f4ec;
+  --hard:#a86a00; --hard-bg:#fbf1dc;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+    --bad:#ff7b6b; --good:#6fd39f; --good-bg:#16301f;
+    --hard:#e8b24a; --hard-bg:#3a2d12;
+    --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151513; --surface:#1e1e1b; --surface-2:#262622; --text:#efede8; --muted:#a19d94; --line:#34332e;
+  --bad:#ff7b6b; --good:#6fd39f; --good-bg:#16301f;
+  --hard:#e8b24a; --hard-bg:#3a2d12;
+  --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.5}
+button{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+header{background:var(--surface);border-bottom:1px solid var(--line)}
+.head{display:flex;align-items:center;gap:24px;padding:16px 0;flex-wrap:wrap}
+.head h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.01em}
+.head .meta{color:var(--muted);font-size:14px}
+.head .spacer{flex:1}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--muted)}
+.iconbtn:hover{color:var(--text)}
+.iconbtn[aria-pressed="true"]{color:var(--text);border-color:var(--text)}
+.iconbtn:focus-visible{outline:2px solid var(--hard);outline-offset:2px}
+.embedded .head .meta,.embedded #themeBtn{display:none}
+
+main{padding:22px 0 60px}
+.task{background:var(--text);color:var(--bg);border-radius:12px;padding:14px 18px;margin-bottom:18px}
+.task .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.task p{margin:4px 0 0;font-size:16px}
+
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:14px}
+.bar .spacer{flex:1}
+
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:40px minmax(0,1fr) 28px minmax(0,1fr);gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.row .n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--muted);font-size:14px;padding-top:2px}
+.row .from{color:var(--muted)}
+.row .from::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-right:8px;vertical-align:2px}
+.row .arrow{color:var(--muted);text-align:center;padding-top:1px}
+.row .to{font-weight:600}
+.row .to.none{font-weight:400;color:var(--muted);font-style:italic}
+.chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--hard-bg);color:var(--hard);font-weight:600;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.cap{display:none}
+.only-hard .row:not(.hard){display:none}
+
+@media (max-width:700px){
+  .wrap{padding:0 16px}
+  .row{grid-template-columns:32px minmax(0,1fr);gap:4px 10px}
+  .row .arrow{display:none}
+  .row .to{grid-column:2;margin-top:6px;padding-top:8px;border-top:1px dashed var(--line)}
+  .cap{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;font-style:normal;margin-bottom:2px}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap head">
+  <h1>Рефрейминг: 30 фраз</h1>
+  <span class="meta">УНФ · Модуль 2 «Коммуникация» · занятие 07.10.2026</span>
+  <span class="spacer"></span>
+  <button class="iconbtn" id="themeBtn" title="Сменить тему">◐ Тема</button>
+</div></header>
+
+<main class="wrap">
+  <div class="task">
+    <div class="lbl">Задание</div>
+    <p>Переформулировать каждую фразу и сменить рамку: вместо поиска виноватого и оценки человека перейти к причинам, решениям и следующему шагу.</p>
+  </div>
+
+  <div class="bar">
+    <span id="count"></span>
+    <span class="spacer"></span>
+    <button class="iconbtn" id="hardBtn" aria-pressed="false">Только сложные</button>
+  </div>
+
+  <ol class="list" id="list"></ol>
+</main>
+
+<script>
+/* [исходная фраза, рефрейминг, сложно?] — пустой рефрейминг = не придумал */
+const ITEMS=[
+  ["Ты всё сделал неправильно.","Давай разберём, что пошло не так."],
+  ["Ты постоянно опаздываешь.","Какие у тебя блокеры, которые мешают приходить вовремя?"],
+  ["Ты недостаточно стараешься.","Что поможет тебе лучше раскрыться?"],
+  ["Эта идея плохая.","Как можно улучшить эту идею?"],
+  ["Ты опять допустил ошибку.","Давай посмотрим, как сделать так, чтобы эта ошибка не повторялась."],
+  ["Ты меня не слушаешь.","Можешь вкратце объяснить мою идею?"],
+  ["Этот проект провален.","Какие уроки мы вынесли из этого проекта? Что можно исправить?"],
+  ["Ты работаешь слишком медленно.","Как можно ускорить выполнение твоих задач?"],
+  ["Я не могу тебе доверять.","Давай обсудим это в следующий раз.",true],
+  ["Ты всегда забываешь важные вещи.","Что ты используешь, чтобы не забывать важные вещи?"],
+  ["Ты слишком эмоционален.","Эмоции тут не помогут, давай разберём всё по существу."],
+  ["Ты опять нарушил дедлайн.","Что помешало выполнить задачу вовремя?"],
+  ["Ты не умеешь работать в команде.","Что можно изменить во взаимодействии, чтобы коммуникация в команде стала лучше?"],
+  ["Ты не справился с задачей.","Как я могу тебе помочь с задачей?"],
+  ["Твоя работа меня разочаровала.","Результат отличается от моих ожиданий."],
+  ["Ты слишком медленно думаешь.","Выбери лучшее решение на данный момент."],
+  ["Ты не следуешь инструкциям.","Какие пробелы или трудности ты видишь в работе по инструкции?"],
+  ["Ты всё усложняешь.","Как можно это упростить?"],
+  ["Ты не понимаешь, о чём говоришь.","Давай пройдёмся по основным пунктам.",true],
+  ["Ты не умеешь решать проблемы.","Какие ещё есть решения?"],
+  ["Ты ничего не предлагаешь.","Что ты думаешь по этому поводу?"],
+  ["Этот текст ужасный.","Ты можешь лучше."],
+  ["Ты ведёшь себя неадекватно.","Сложно плыть в шторм.",true],
+  ["Ты всегда делаешь ошибки.","Давай проведём ревью по твоим кейсам и задачам."],
+  ["Ты не справляешься с задачами.","Какие у тебя препятствия в выполнении задач?"],
+  ["Ты плохо разбираешься в этом вопросе.","Тебе надо углубиться в этот вопрос."],
+  ["Ты всегда что-то забываешь.","Давай я подарю тебе хороший блокнот и ручку."],
+  ["Ты не умеешь слушать.","Давай я сначала послушаю тебя, потом ты меня, а потом обсудим."],
+  ["Я больше не могу на тебя рассчитывать.","",true],
+  ["Этот результат никуда не годится.","Нужно пересмотреть нынешнее решение."]
+];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hard=ITEMS.filter(i=>i[2]).length;
+$("#list").innerHTML=ITEMS.map(([a,b,h],i)=>`
+  <li class="row${h?" hard":""}">
+    <span class="n">${i+1}</span>
+    <span class="from">${esc(a)}</span>
+    <span class="arrow" aria-hidden="true">→</span>
+    <span class="to${b?"":" none"}"><span class="cap">Рефрейминг</span>${b?esc(b):"Пока не придумал"}${h?'<span class="chip">Сложно</span>':""}</span>
+  </li>`).join("");
+$("#count").textContent=`${ITEMS.length} фраз · ${hard} отмечены как сложные`;
+
+$("#hardBtn").onclick=e=>{
+  const on=document.body.classList.toggle("only-hard");
+  e.currentTarget.setAttribute("aria-pressed",on);
+};
+$("#themeBtn").onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+  try{localStorage.setItem("argTheme",r.dataset.theme)}catch(e){}
+};
+</script>
+</body>
+</html>

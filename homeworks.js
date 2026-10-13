@@ -24,5 +24,14 @@ window.HOMEWORKS = [
     title: "Риторика и аргументация",
     subtitle: "Разбор трёх выступлений: Кинг, «Отдел новостей», Али",
     path: "hw/2026-09-23-argumentation/index.html"
+  },
+  {
+    id: "2026-10-07-reframing",
+    module: "m2",
+    date: "2026-10-07",
+    type: "ДЗ",
+    title: "Рефрейминг",
+    subtitle: "30 фраз: смена рамки от оценки к решению",
+    path: "hw/2026-10-07-reframing/index.html"
   }
 ];
